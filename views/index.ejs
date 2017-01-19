@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chat</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+    	$(document).ready(function(){
+    		var socket = io.connect();
+
+    		var username = prompt('Enter name here:')
+    		if(username != null){
+    			socket.emit('new_user', {user: username})
+    		}
+
+    		socket.on('all_messages', function(data){
+    			$('#chat').html(data.messages);
+    			scroll();
+    		})
+
+    		socket.on('new_message', function(data){
+    			var chat = $('#chat').html()
+    			chat += data.user + data.message +'\n'
+    			$('#chat').html(chat)
+    			scroll();
+    		})
+
+    		$('form').submit(function(e){
+    			e.preventDefault();
+    		})
+
+    		$('form').on('keypress', function(e){
+    			if(e.which == 13){
+	    			e.preventDefault();
+    				if($('#message').val()){
+    					socket.emit('message_sent', {message: $('#message').val()});
+    					$('form').trigger('reset');
+    				}
+    			}
+    		})
+    	})
+
+    	function scroll(){
+    		$('#chat').scrollTop($('#chat')[0].scrollHeight)
+    	}
+    </script>
+</head>
+<body>
+	<h1>chat</h1>
+	<textarea id='chat' readonly rows=25 cols=50></textarea>
+	<form>
+		<textarea id='message' cols=50 ></textarea>
+		<input type="submit" value="Send">
+	</form>
+</body>
+</html>
