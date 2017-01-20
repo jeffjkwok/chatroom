@@ -2,8 +2,11 @@ var path = require('path');
 var express = require('express')
 var app = express();
 var root = __dirname;
+var dateFormat = require('dateformat');
 
 app.use(express.static(path.join(root, './static')));
+app.use('/scripts', express.static(__dirname + '/node_modules/sweetalert/dist/'))
+
 
 app.set('views', path.join(root, './views'))
 app.set('view engine', 'ejs')

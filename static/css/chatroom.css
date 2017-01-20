@@ -1,0 +1,44 @@
+body{
+  background-image: url('../images/white-wood.jpg');
+}
+
+textarea {
+  resize: none;
+  font-family: sans-serif;
+}
+
+#chatroom{
+  text-align: center;
+  padding: 2em;
+  background-color: #335082;
+  background-image: url('../images/dark-wood.jpg');
+  max-width: 60em;
+  margin: 5em auto;
+  border-radius: .25em;
+  box-shadow: .5em .5em .5em;
+}
+
+#box{
+  margin: 0 auto;
+}
+
+h1{
+  margin-bottom: 1em;
+  color: white;
+}
+
+.btn-grey{
+  background-color: #393b3a
+}
+
+.btn-grey:hover{
+  background-color: #5d5c5c
+}
+
+.btn, .btn:hover{
+  color: white
+}
+
+textarea:focus, input:focus{
+  outline: none;
+}

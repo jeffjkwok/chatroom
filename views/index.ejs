@@ -3,54 +3,100 @@
 <head>
 	<title>Chat</title>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript">
-    	$(document).ready(function(){
-    		var socket = io.connect();
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/chatroom.css">
+  <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script type ="text/javascript" src="/js/bootstrap.min.js"></script>
+  <!-- <script type ="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script> -->
+  <script src="/scripts/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/scripts/sweetalert.css">
 
-    		var username = prompt('Enter name here:')
-    		if(username != null){
+  <script type="text/javascript">
+  	$(document).ready(function(){
+  		var socket = io.connect();
+      //
+  		// var username = prompt('Enter name here:')
+  		// if(username != null){
+  		// 	socket.emit('new_user', {user: username})
+  		// }
+      //
+
+      // bootbox.prompt({
+      //   title: "Enter your desired username here:",
+      //   input: 'text',
+      //   callback: function(result){
+      //     socket.emit('new_user', {user: result})
+      //   }
+      // })
+
+      swal({
+        text: "Enter your desired name here!",
+        title: "Chatroom.",
+        type: 'input',
+        closeOnConfirm: true,
+        showCancelButton: false,
+      }, function(inputValue){
+        var username = inputValue;
+        if(username != null){
     			socket.emit('new_user', {user: username})
     		}
+      })
 
-    		socket.on('all_messages', function(data){
-    			$('#chat').html(data.messages);
-    			scroll();
-    		})
+  		socket.on('all_messages', function(data){
+  			$('#chat').html(data.messages);
+  			scroll();
+  		})
 
-    		socket.on('new_message', function(data){
-    			var chat = $('#chat').html()
-    			chat += data.user + data.message +'\n'
-    			$('#chat').html(chat)
-    			scroll();
-    		})
+  		socket.on('new_message', function(data){
+  			var chat = $('#chat').html()
+  			chat += data.user + data.message +'\n'
+  			$('#chat').html(chat)
+  			scroll();
+  		})
 
-    		$('form').submit(function(e){
+  		$('form').submit(function(e){
+  			e.preventDefault();
+  		})
+
+  		$('form').on('keypress', function(e){
+  			if(e.which == 13){
     			e.preventDefault();
-    		})
+  				if($('#message').val()){
+  					socket.emit('message_sent', {message: $('#message').val()});
+  					$('form').trigger('reset');
+  				}
+  			}
+  		})
+  	})
 
-    		$('form').on('keypress', function(e){
-    			if(e.which == 13){
-	    			e.preventDefault();
-    				if($('#message').val()){
-    					socket.emit('message_sent', {message: $('#message').val()});
-    					$('form').trigger('reset');
-    				}
-    			}
-    		})
-    	})
-
-    	function scroll(){
-    		$('#chat').scrollTop($('#chat')[0].scrollHeight)
-    	}
-    </script>
+  	function scroll(){
+  		$('#chat').scrollTop($('#chat')[0].scrollHeight)
+  	}
+  </script>
 </head>
 <body>
-	<h1>chat</h1>
-	<textarea id='chat' readonly rows=25 cols=50></textarea>
-	<form>
-		<textarea id='message' cols=50 ></textarea>
-		<input type="submit" value="Send">
-	</form>
+  <div class="container">
+    <div class="container-fluid">
+      <div id="chatroom">
+        <h1>Chatroom.</h1>
+        <div id='box'>
+          <form>
+            <div class="form-group">
+              <textarea id='chat' readonly rows=15 cols=40 class='form-control'></textarea>
+            </div>
+          </form>
+          <form>
+            <div class="input-group">
+              <textarea id='message' cols=50 class='form-control custom-control'></textarea>
+              <span class="input-group-addon btn btn-grey">Send</span>
+            </div>
+            <!-- <div class="form-group col-xs-2">
+            <input type="submit" value="Send" class='btn btn-primary'>
+          </div> -->
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
